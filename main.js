@@ -1,5 +1,9 @@
 // main.js
 import 'dotenv/config'; // Pour charger les variables d'environnement au début
+console.log('MONGO_URI chargé:', process.env.MONGO_URI);
+console.log('PORT chargé:', process.env.PORT);
+console.log('SECRET_KEY chargée:', process.env.SECRET_KEY ? 'Oui' : 'Non');
+
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
