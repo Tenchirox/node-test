@@ -26,8 +26,8 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use(express.json());
 
 // Routes
-app.use('/formateurs', FormateursRoutes);
-app.use('/users', UsersRoutes);
+app.use('/v1/formateurs', FormateursRoutes);
+app.use('/v1/users', UsersRoutes);
 
 
 // Start the server
