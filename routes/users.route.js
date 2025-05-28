@@ -10,9 +10,6 @@ router.post('/login', US.loginUser);
 // Route pour obtenir tous les utilisateurs - Protégée
 router.get('/', verifyToken, US.getAllUsers);
 
-// Route pour obtenir un utilisateur par ID - Protégée (exemple)
-router.get('/:id', verifyToken, US.getUserById);
-
 // Route pour mettre à jour un utilisateur - Protégée (exemple)
 router.put('/:id', verifyToken, US.updateUser);
 

@@ -10,8 +10,6 @@ router.post('/', verifyToken, FC.newFormateur);
 // Route pour obtenir tous les formateurs
 router.get('/', verifyToken, FC.getAllFormateurs);
 
-// Route pour obtenir un formateur par ID
-router.get('/:id', verifyToken, FC.getFormateurById);
 
 // Route pour mettre à jour un formateur
 router.put('/:id', verifyToken, FC.updateFormateur);
