@@ -1,12 +1,24 @@
+// middleware/auth.middleware.js
 import jwt from 'jsonwebtoken';
 
-export function verifiyToken(req, res, next) {
-   const awtHeader = req.headers['authorization'];
-    const token = awtHeader.split(' ')[1];
+function verifyToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
-   const decoded = jwt.verify(awtHeader, process.env.JWT_SECRET);
+    if (token == null) {
+        return res.status(401).json({ message: 'Accès non autorisé: Token manquant' });
+    }
 
-   if (!decoded) return res.status(403).send('Unauthorized!');
-   req.user = decoded;
-   next();
+    jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+        if (err) {
+            if (err.name === 'TokenExpiredError') {
+                return res.status(403).json({ message: 'Accès interdit: Token expiré' });
+            }
+            return res.status(403).json({ message: 'Accès interdit: Token invalide' });
+        }
+        req.user = user;
+        next();
+    });
 }
+
+export default verifyToken;

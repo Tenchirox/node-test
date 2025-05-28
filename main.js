@@ -1,36 +1,56 @@
+// main.js
+import 'dotenv/config'; // Pour charger les variables d'environnement au début
 import express from 'express';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import FormateursRoutes  from './routes/formateurs.route.js';
-import UsersRoutes from './routes/users.route.js';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+
+// Pour la gestion des chemins en ESM
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Routes (avec extension .js)
+import usersRoutes from './routes/users.route.js';
+import formateursRoutes from './routes/formateurs.route.js';
+
+// __dirname n'est pas disponible en ESM, voici l'alternative
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// Load environment variables from .env file
-dotenv.config();
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// Database Connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('Successfully connected to MongoDB.');
-  })
-  .catch((err) => {
-    console.error('Error connecting to MongoDB:', err.message);
-    // It's often a good practice to exit the application if the database connection fails
-    // as most of the application's functionality will likely depend on it.
-    process.exit(1);
-  });
+// Servir les fichiers statiques du dossier 'public'
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware to parse JSON bodies
-app.use(express.json());
+// Routes API
+app.use('/api/users', usersRoutes);
+app.use('/api/formateurs', formateursRoutes);
 
-// Routes
-app.use('/v1/formateurs', FormateursRoutes);
-app.use('/v1/users', UsersRoutes);
-
-
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+// Routes pour servir les pages HTML principales
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Connexion à MongoDB
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log('Connecté à MongoDB');
+        app.listen(port, () => {
+            console.log(`Serveur démarré sur http://localhost:${port}`);
+        });
+    })
+    .catch(err => {
+        console.error('Erreur de connexion à MongoDB', err);
+    });
